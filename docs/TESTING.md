@@ -21,6 +21,8 @@ These tests do not cover every codec, source-format combination or third-party d
 
 ## Local validation record
 
+The 0.3.1 packaging-only update was built with zero warnings/errors. Both Portable and Lite ZIPs were extracted, their SHA-256 checksums and runtime payload/configuration were checked, and each extracted executable successfully initialized WPF/the native image policy and exported its PNG/ICO brand assets. Portable measured about 90.2 MiB and Lite 20.1 MiB locally. Both retain the same native image library. Conversion behavior is unchanged from the 94-test run below; these startup checks are not a repeat of every conversion or GUI scenario. Workflow syntax is checked separately before distribution.
+
 Release 0.3.0 was compiled on Windows x64 using .NET SDK 10.0.402 with warnings treated as errors (zero warnings/errors). The 20 October 2026 local run passed **94 tests, with zero failures and no skipped engine suites**, including FFmpeg, LibreOffice and Pandoc. The XML and summary are included in `validation/`. These are locally executed tests; a GitHub-hosted run has not yet occurred.
 
 The runner initializes the image policy **before any Magick image is created**, matching application startup. GUI testing exposed that the old initialization order could hide policy failures for color canvases. The policy now permits the internal color canvas used for collage; restricted SVG uses its explicit built-in renderer, while application image reads select a decoder from the accepted extension. External delegates remain disabled.

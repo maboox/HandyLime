@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.1 — 2026-10-20
+
+- Separated app downloads from the native library source companion in Actions and public Releases.
+- Added a smaller Lite edition using the installed .NET Desktop Runtime, with the same app features as Portable.
+- Added checksum, extracted-payload and startup verification for both release editions. Kept native dependencies replaceable and preserved license/source availability.
+- Added public release publishing from a version tag or the manual workflow's publish option, with English/Persian download guidance.
+- Simplified the public README and moved build/release details to the development guide.
+
 ## 0.3.0 — 2026-10-20 · HandyLime
 
 - Renamed the app to HandyLime; introduced an original vector lime mark, multi-size application icon and lime palette.

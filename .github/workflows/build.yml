@@ -5,6 +5,11 @@ on:
     tags: ['v*']
   pull_request:
   workflow_dispatch:
+    inputs:
+      publish_release:
+        description: 'Publish this version to Releases (run from the default branch)'
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -20,6 +25,8 @@ jobs:
     env:
       DOTNET_CLI_TELEMETRY_OPTOUT: '1'
       DOTNET_NOLOGO: '1'
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
@@ -27,6 +34,14 @@ jobs:
           dotnet-version: '10.0.x'
           cache: true
           cache-dependency-path: '**/packages.lock.json'
+      - name: Read release version
+        id: version
+        shell: pwsh
+        run: |
+          [xml]$props = Get-Content Directory.Build.props -Raw
+          $tag = 'v' + $props.Project.PropertyGroup.Version
+          if ($env:GITHUB_REF_TYPE -eq 'tag' -and $env:GITHUB_REF_NAME -ne $tag) { throw "Tag must match Directory.Build.props: $tag" }
+          "tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
       - name: Install integration-test engines
         shell: pwsh
         run: |
@@ -40,9 +55,12 @@ jobs:
         run: dotnet build HandyLime.slnx -c Release --no-restore -warnaserror
       - name: Unit and real conversion integration tests
         run: dotnet run --project tests/HandyLime.Tests -c Release --no-build -- --require-engines
-      - name: Package Windows x64 portable app
+      - name: Package Windows x64 Portable and Lite editions
         shell: pwsh
         run: ./scripts/Publish.ps1
+      - name: Verify extracted release packages
+        shell: pwsh
+        run: ./scripts/Test-Packages.ps1
       - name: Upload portable app
         uses: actions/upload-artifact@v4
         with:
@@ -50,9 +68,28 @@ jobs:
           path: |
             artifacts/HandyLime-windows-x64.zip
             artifacts/HandyLime-windows-x64.zip.sha256
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+      - name: Upload Lite app
+        uses: actions/upload-artifact@v4
+        with:
+          name: HandyLime-windows-x64-lite
+          path: |
+            artifacts/HandyLime-windows-x64-lite.zip
+            artifacts/HandyLime-windows-x64-lite.zip.sha256
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+      - name: Upload library source companion
+        uses: actions/upload-artifact@v4
+        with:
+          name: HandyLime-corresponding-source
+          path: |
             artifacts/HandyLime-corresponding-source.zip
             artifacts/HandyLime-corresponding-source.zip.sha256
           if-no-files-found: error
+          compression-level: 0
           retention-days: 30
       - name: Upload test results
         if: always()
@@ -63,7 +100,7 @@ jobs:
           if-no-files-found: warn
 
   release:
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.publish_release && github.ref_name == github.event.repository.default_branch)
     needs: build
     runs-on: ubuntu-latest
     permissions:
@@ -73,9 +110,34 @@ jobs:
         with:
           name: HandyLime-windows-x64
           path: release
-      - name: Create draft release
+      - uses: actions/download-artifact@v4
+        with:
+          name: HandyLime-windows-x64-lite
+          path: release
+      - uses: actions/download-artifact@v4
+        with:
+          name: HandyLime-corresponding-source
+          path: release
+      - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-          TAG: ${{ github.ref_name }}
-        run: gh release create "$TAG" release/* --draft --title "HandyLime $TAG" --generate-notes
+          TAG: ${{ needs.build.outputs.tag }}
+        run: |
+          cat > release-notes.md <<'NOTES'
+          ## Download
+
+          - **HandyLime-windows-x64.zip** — Portable. Includes .NET; extract and run. Recommended for most users.
+          - **HandyLime-windows-x64-lite.zip** — Smaller download with the same features. Requires [Microsoft .NET Desktop Runtime 10, Windows x64](https://dotnet.microsoft.com/en-us/download/dotnet/10.0).
+          - **HandyLime-corresponding-source.zip** — Library source companion for redistribution/development. Not needed to run the app.
+          - **.sha256** files — Optional download integrity checks.
+
+          Extract the entire chosen app ZIP and run `HandyLime.exe`. Video/audio and Office tools use optional engines configured in Settings.
+
+          This is a preview release. See the [user guide](https://github.com/maboox/HandyLime#readme) for usage and supported formats.
+
+          ## دانلود
+
+          نسخهٔ **Portable** بدون نصب جداگانهٔ دات‌نت اجرا می‌شود. نسخهٔ **Lite** کم‌حجم‌تر است و به **.NET Desktop Runtime 10 x64** نیاز دارد. فقط یکی از این دو را دانلود کنید. فایل **corresponding-source** برای اجرای برنامه لازم نیست.
+          NOTES
+          gh release create "$TAG" release/* --target "$GITHUB_SHA" --title "HandyLime $TAG" --notes-file release-notes.md --latest
