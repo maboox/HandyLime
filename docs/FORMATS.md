@@ -1,6 +1,6 @@
 # Supported operations
 
-This file describes HandyLime 0.3.0, not the full capability set of its engines. The app exposes only the routes in `Catalog.cs`. Batch selections show the intersection of compatible operations. All outputs are new copies, except the separately confirmed Move file action.
+This file describes HandyLime 0.3.x, not the full capability set of its engines. Portable and Lite expose the same routes in `Catalog.cs`. Batch selections show the intersection of compatible operations. All outputs are new copies, except the separately confirmed Move file action.
 
 ## Conversions
 

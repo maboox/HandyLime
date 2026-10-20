@@ -7,7 +7,7 @@
     <LangVersion>latest</LangVersion>
     <Deterministic>true</Deterministic>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
-    <Version>0.3.0</Version>
+    <Version>0.3.1</Version>
     <Authors>HandyLime contributors</Authors>
     <Copyright>Copyright © 2026 HandyLime contributors</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
