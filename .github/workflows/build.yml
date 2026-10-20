@@ -62,7 +62,7 @@ jobs:
         shell: pwsh
         run: ./scripts/Test-Packages.ps1
       - name: Upload portable app
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: HandyLime-windows-x64
           path: |
@@ -72,7 +72,7 @@ jobs:
           compression-level: 0
           retention-days: 30
       - name: Upload Lite app
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: HandyLime-windows-x64-lite
           path: |
@@ -82,7 +82,7 @@ jobs:
           compression-level: 0
           retention-days: 30
       - name: Upload library source companion
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: HandyLime-corresponding-source
           path: |
@@ -93,7 +93,7 @@ jobs:
           retention-days: 30
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-results
           path: TestResults/
