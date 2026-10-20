@@ -1,0 +1,232 @@
+[
+  {
+    "name": "Magick.NET",
+    "commit": "79bb8700d7fe3a564f62926ab299fc2520cb2269",
+    "repository": "dlemstra/Magick.NET"
+  },
+  {
+    "name": "Magick.Native",
+    "commit": "4dcdad28530c14c8d35687fdeb1ecc8d39b01e30",
+    "repository": "dlemstra/Magick.Native"
+  },
+  {
+    "name": "ImageMagick",
+    "commit": "211e5b975a0019a88dcef5f84c1193f46738d815",
+    "repository": "ImageMagick/ImageMagick"
+  },
+  {
+    "name": "Dependencies-build",
+    "commit": "2026.10.09.2225",
+    "repository": "ImageMagick/Dependencies"
+  },
+  {
+    "name": "aom",
+    "commit": "689067b48df9548d25e37abaa618ebd4b6015c67",
+    "repository": "ImageMagick/aom"
+  },
+  {
+    "name": "brotli",
+    "commit": "6225e7a93b6bcc1f3e3b267e9523a8eaea49eb5e",
+    "repository": "ImageMagick/brotli"
+  },
+  {
+    "name": "bzip2",
+    "commit": "abffe764f875f71d051efb19d4c83139375f82d7",
+    "repository": "ImageMagick/bzip2"
+  },
+  {
+    "name": "de265",
+    "commit": "5a0bf9f624d810de6af20e41ac3cfd92bf7de508",
+    "repository": "ImageMagick/de265"
+  },
+  {
+    "name": "exr",
+    "commit": "85a96b21d3cdcae99fbea6f32f62eba9ca4a9fdd",
+    "repository": "ImageMagick/exr"
+  },
+  {
+    "name": "ffi",
+    "commit": "91982d4ac97b179dd1fb878caef2ed2847bc38b6",
+    "repository": "ImageMagick/ffi"
+  },
+  {
+    "name": "freetype",
+    "commit": "6cf8b1a08bdec1d41246f51bcd12e5a62c9845e2",
+    "repository": "ImageMagick/freetype"
+  },
+  {
+    "name": "glib",
+    "commit": "ea0118ca0d408473d320b21262a1cdc6ce3e5f40",
+    "repository": "ImageMagick/glib"
+  },
+  {
+    "name": "heif",
+    "commit": "fb38f427d04f098c30b5c6ebda46be366841cc7b",
+    "repository": "ImageMagick/heif"
+  },
+  {
+    "name": "highway",
+    "commit": "e1a586af5be6358bb983ff608f9678a622209ca3",
+    "repository": "ImageMagick/highway"
+  },
+  {
+    "name": "imath",
+    "commit": "1ec391453dd33f3432018d3a266e3d177a705235",
+    "repository": "ImageMagick/imath"
+  },
+  {
+    "name": "jpeg-turbo",
+    "commit": "b91492930ceb23c0b5282e8b9fc21de54182d92e",
+    "repository": "ImageMagick/jpeg-turbo"
+  },
+  {
+    "name": "jpeg-xl",
+    "commit": "8503118ff13ab8b11680296900da3361d6703dc1",
+    "repository": "ImageMagick/jpeg-xl"
+  },
+  {
+    "name": "lcms",
+    "commit": "d261ab6fda30fd7578a2ce7ace5c0b2c7d3fc0b8",
+    "repository": "ImageMagick/lcms"
+  },
+  {
+    "name": "lqr",
+    "commit": "a2e9e8b5b41bf0569f51482707a12d354a086f3a",
+    "repository": "ImageMagick/lqr"
+  },
+  {
+    "name": "openjpeg",
+    "commit": "5a52e8e0690da686ddb6e98310e7bb5190a9a7c5",
+    "repository": "ImageMagick/openjpeg"
+  },
+  {
+    "name": "openjph",
+    "commit": "c1a1ffc1e3f90eb9397407f1f545a47e01390aef",
+    "repository": "ImageMagick/openjph"
+  },
+  {
+    "name": "png",
+    "commit": "1ccb8b78643c7ad5360f00719a1e952ce0be7a53",
+    "repository": "ImageMagick/png"
+  },
+  {
+    "name": "raw",
+    "commit": "9f7613ef48877180225b9377c87b0f3a65a2ca8e",
+    "repository": "ImageMagick/raw"
+  },
+  {
+    "name": "tiff",
+    "commit": "3021cd03440ba6954f8bdf2b7ad4557a36092cd8",
+    "repository": "ImageMagick/tiff"
+  },
+  {
+    "name": "webp",
+    "commit": "b981ef267195cb12f2cb97e4dd23e12a1323a4ce",
+    "repository": "ImageMagick/webp"
+  },
+  {
+    "name": "xml",
+    "commit": "3ba73c8312b7ac88adc1a2e62df13d0827e93a0f",
+    "repository": "ImageMagick/xml"
+  },
+  {
+    "name": "zlib",
+    "commit": "e42706934e4e7564d960031ae62ff29d918ee06d",
+    "repository": "ImageMagick/zlib"
+  },
+  {
+    "name": "zstd",
+    "commit": "4d5752ffeca8defb48ad744274f4f76b2866d71d",
+    "repository": "ImageMagick/zstd"
+  },
+  {
+    "name": "cairo",
+    "commit": "4334da83d8f44abe5aab1a11956e3f8e6e58eac7",
+    "repository": "ImageMagick/cairo"
+  },
+  {
+    "name": "croco",
+    "commit": "178785cdc6faecad555a4e6fe4fda2b625046e8e",
+    "repository": "ImageMagick/croco"
+  },
+  {
+    "name": "fribidi",
+    "commit": "f62e4ce7160f0c9d70a6a448c83122c920370324",
+    "repository": "ImageMagick/fribidi"
+  },
+  {
+    "name": "gdk-pixbuf",
+    "commit": "92a234886a0337480770ef93dc74ea920bf39ab3",
+    "repository": "ImageMagick/gdk-pixbuf"
+  },
+  {
+    "name": "harfbuzz",
+    "commit": "fe24029d434c2797c18052f58f6bc7b5dcfee8d7",
+    "repository": "ImageMagick/harfbuzz"
+  },
+  {
+    "name": "lzma",
+    "commit": "131e9a49425f51b8dd8710c57fbaa527baed3989",
+    "repository": "ImageMagick/lzma"
+  },
+  {
+    "name": "openh264",
+    "commit": "5ed6416df5c4eb35e275f759792c9253c5f1f5f3",
+    "repository": "ImageMagick/openh264"
+  },
+  {
+    "name": "pango",
+    "commit": "0b1e4536e0005f3c36b523c17ea12322490efd45",
+    "repository": "ImageMagick/pango"
+  },
+  {
+    "name": "pixman",
+    "commit": "f7b55a8d3c39380724da9fbdef72ad70be800efc",
+    "repository": "ImageMagick/pixman"
+  },
+  {
+    "name": "raqm",
+    "commit": "a699b8b7838acb4ac8d5891f42ecf3d84a00a9ad",
+    "repository": "ImageMagick/raqm"
+  },
+  {
+    "name": "rsvg",
+    "commit": "7415a6765db7554ba6f0f1b3dcb0877f36ff581b",
+    "repository": "ImageMagick/rsvg"
+  },
+  {
+    "name": "zip",
+    "commit": "745377bdab21cf5e5fc19d0bbfcde93030d3af5e",
+    "repository": "ImageMagick/zip"
+  },
+  {
+    "name": "jpeg-turbo-12",
+    "commit": "9837071e8c0e5fba6daa03f31aba4416ff5eaf7c",
+    "repository": "ImageMagick/jpeg-turbo-12"
+  },
+  {
+    "name": "jpeg-turbo-16",
+    "commit": "d16d0839d655478b4d517ebe2aeabfecce8192d9",
+    "repository": "ImageMagick/jpeg-turbo-16"
+  },
+  {
+    "name": "fftw",
+    "commit": "6d33fb83ae4f2014834b1f506b444916e9a19ef7",
+    "repository": "ImageMagick/fftw"
+  },
+  {
+    "name": "flif",
+    "commit": "2f4c78d6c88025de551d461a9981be2004b36beb",
+    "repository": "ImageMagick/flif"
+  },
+  {
+    "name": "jbig",
+    "commit": "c431166292d1590280b30a8edefee4d36c7a6219",
+    "repository": "ImageMagick/jbig"
+  },
+  {
+    "name": "fontconfig",
+    "commit": "943048d94dfa3d7d4a213f36f9ef7af988397cd4",
+    "repository": "ImageMagick/fontconfig"
+  }
+]
