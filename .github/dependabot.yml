@@ -1,0 +1,14 @@
+version: 2
+updates:
+  - package-ecosystem: nuget
+    directory: /
+    schedule:
+      interval: weekly
+    ignore:
+      # PDFsharp >= 6.5 changes licensing. Do not silently change this project's license.
+      - dependency-name: PDFsharp
+        versions: ['>= 6.5.0']
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly

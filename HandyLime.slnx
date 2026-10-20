@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/HandyLime.App/HandyLime.App.csproj" />
+    <Project Path="src/HandyLime.Core/HandyLime.Core.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/HandyLime.Tests/HandyLime.Tests.csproj" />
+  </Folder>
+</Solution>
