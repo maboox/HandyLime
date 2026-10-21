@@ -31,7 +31,11 @@ All ZIPs receive SHA-256 sidecars. No optional conversion-engine binaries are co
 
 ## GitHub Actions
 
-Push the source contents, including `.github`, into the repository root. A push or pull request runs **Windows build and tests**: locked restore, warning-free build, real-engine tests, packaging and extracted-package startup checks.
+Push the source contents, including `.github`, into the repository root. A pull request, push to `main`, version tag or manual run starts **Windows build and tests**: locked restore, warning-free build, real-engine tests, packaging and extracted-package startup checks. Feature-branch pushes are tested through their pull request, avoiding duplicate builds.
+
+The required checks are `build`, `secret-scan` and `verify-artifacts`. Gitleaks scans Git history locally on the runner with secret values redacted. The artifact check downloads the three packages using the same action as Releases and verifies their checksums on Linux. Actions are pinned to official commit hashes; Dependabot proposes grouped updates. Releases wait for all three jobs to pass.
+
+`main` requires an up-to-date pull request, successful required checks and resolved conversations. Force pushes and deletion are disabled, including for administrators. No second-person approval is required for this single-maintainer repository. Merged branches are removed automatically; feature changes should start on a new branch.
 
 Actions uploads three independent artifacts. Users do not need to download the library source bundle to run the program. ZIP artifacts use no additional outer compression; their inner app archives are already compressed.
 
@@ -49,7 +53,7 @@ git push origin v0.4.0
 
 The tag must match the project version. Public Releases contain Portable, Lite and the source companion as separate assets with checksums. The release notes explain which file users need in English and Persian. The workflow uses the repository's built-in token; no personal access token or custom secret is required. Publishing is limited to tag pushes or an explicit manual publish from the default branch. Pull requests cannot publish.
 
-Use a new version for a new release. An existing version is not silently replaced. A regular branch push builds artifacts without publishing. Preview status and limitations remain visible in the user guide.
+Use a new version for a new release. An existing version is not silently replaced. A regular push to `main` builds artifacts without publishing. Preview status and limitations remain visible in the user guide.
 
 ## Source ZIP for sharing
 

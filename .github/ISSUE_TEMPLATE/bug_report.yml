@@ -1,14 +1,14 @@
-name: Bug report
-description: Report a reproducible problem
+name: Bug report / گزارش مشکل
+description: Report a reproducible problem. English and Persian are welcome.
 body:
   - type: input
     id: version
-    attributes: {label: 'HandyLime and Windows versions'}
+    attributes: {label: 'HandyLime and Windows versions / نسخهٔ برنامه و ویندوز'}
     validations: {required: true}
   - type: textarea
     id: steps
-    attributes: {label: 'Steps to reproduce', description: 'Include file format, selected tool, settings and expected/actual result. Please do not upload private documents.'}
+    attributes: {label: 'Steps to reproduce / مراحل بازتولید', description: 'Include file format, selected tool, settings and expected/actual result. Please do not upload private documents. فارسی هم پذیرفته می‌شود؛ فایل شخصی یا اطلاعات محرمانه نفرستید.'}
     validations: {required: true}
   - type: textarea
     id: error
-    attributes: {label: 'Error from Activity', description: 'Remove personal paths or private information before posting.'}
+    attributes: {label: 'Error from Activity / خطای نمایش‌داده‌شده', description: 'Remove personal paths or private information before posting. مسیرها و اطلاعات شخصی را حذف کنید.'}

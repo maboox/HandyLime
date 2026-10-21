@@ -1,0 +1,17 @@
+name: Feature request / پیشنهاد قابلیت
+description: Suggest an improvement. English and Persian are welcome.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case / نیاز یا مشکل
+      description: Describe what you want to accomplish. Please do not include private files or personal information.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Suggested behavior / پیشنهاد شما
+      description: Explain how you would like HandyLime to work. فارسی هم پذیرفته می‌شود.
+    validations:
+      required: true
