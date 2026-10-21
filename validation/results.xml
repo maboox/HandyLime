@@ -1,7 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<testsuite name="HandyLime" tests="94" failures="0">
+<testsuite name="HandyLime" tests="102" failures="0">
   <testcase name="Visual split markers: sorting and invalid boundaries" />
   <testcase name="Missing engine is identified before starting work" />
+  <testcase name="Video adjustment catalog shares every photo slider" />
+  <testcase name="Windows startup quotes paths and rejects unsafe commands" />
+  <testcase name="Windows startup registration isolated roundtrip" />
+  <testcase name="Video frame adjustments are neutral, bounded and cancellable" />
   <testcase name="Subtitle roundtrip and Unicode" />
   <testcase name="Reject malformed subtitle timing" />
   <testcase name="PDF page ranges, descending and duplicates" />
@@ -52,6 +56,10 @@
   <testcase name="PDF render all pages to jpg" />
   <testcase name="Mixed selection only exposes common tools" />
   <testcase name="Generate media fixtures" />
+  <testcase name="Video adjustments preserve geometry duration audio and neutral color" />
+  <testcase name="Video edited color matches the photo frame preview" />
+  <testcase name="Video adjustments handle silent clips sharpening and unusual paths" />
+  <testcase name="Video adjustments reject invalid values and clean cancelled work" />
   <testcase name="Video to mov" />
   <testcase name="Video to mkv" />
   <testcase name="Video to webm" />

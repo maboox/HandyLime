@@ -9,7 +9,7 @@ public static class Icons
 {
     static readonly Dictionary<string,Geometry> cache=[];
     public static string Name(string id)=>id switch{
-        "adjust"=>"sliders-horizontal","annotate"=>"pencil","background"=>"image","collage"=>"images","rotate"=>"rotate-cw","flip"=>"arrow-left-right","resize"=>"expand","speed"=>"gauge","frame"=>"camera","join-video" or "pdf-merge"=>"combine","pdf-pages"=>"files","visualizer"=>"activity","normalize" or "channels" or "bleep"=>"volume-2","zip" or "tar" or "extract"=>"archive","action:float"=>"files","action:copy"=>"copy","action:copyto"=>"folder","action:move"=>"move","action:path"=>"clipboard","action:reveal"=>"folder-open","action:terminal"=>"terminal",
+        "adjust" or "adjust-video"=>"sliders-horizontal","annotate"=>"pencil","background"=>"image","collage"=>"images","rotate"=>"rotate-cw","flip"=>"arrow-left-right","resize"=>"expand","speed"=>"gauge","frame"=>"camera","join-video" or "pdf-merge"=>"combine","pdf-pages"=>"files","visualizer"=>"activity","normalize" or "channels" or "bleep"=>"volume-2","zip" or "tar" or "extract"=>"archive","action:float"=>"files","action:copy"=>"copy","action:copyto"=>"folder","action:move"=>"move","action:path"=>"clipboard","action:reveal"=>"folder-open","action:terminal"=>"terminal",
         var x when x.Contains("crop")=>"crop",var x when x.Contains("strip")=>"file-search",var x when x.Contains("compress")=>"shrink",var x when x.Contains("split")||x.Contains("trim")=>"scissors",var x when x.Contains("redact")=>"eye-off",_=>id
     };
     public static Viewbox Create(string id,double size=18)

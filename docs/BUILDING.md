@@ -37,14 +37,14 @@ Actions uploads three independent artifacts. Users do not need to download the l
 
 ## Publish a public Release
 
-Use either method after updating `Directory.Build.props` and `CHANGELOG.md`:
+Use either method after updating `Directory.Build.props`, `CHANGELOG.md` and the user-facing `docs/RELEASE-NOTES.md`:
 
 1. Open **Actions → Windows build and tests → Run workflow** on the default branch. Enable **Publish this version to Releases**, then run. After successful tests, the workflow creates the matching version tag and a public Release.
 2. Push a matching version tag, for example:
 
 ```powershell
-git tag v0.3.1
-git push origin v0.3.1
+git tag v0.4.0
+git push origin v0.4.0
 ```
 
 The tag must match the project version. Public Releases contain Portable, Lite and the source companion as separate assets with checksums. The release notes explain which file users need in English and Persian. The workflow uses the repository's built-in token; no personal access token or custom secret is required. Publishing is limited to tag pushes or an explicit manual publish from the default branch. Pull requests cannot publish.

@@ -22,7 +22,7 @@ public partial class App : System.Windows.Application
         EventManager.RegisterClassHandler(typeof(Window),FrameworkElement.LoadedEvent,new RoutedEventHandler((sender,_)=>WindowFrame.Attach((Window)sender)));
         Microsoft.Win32.SystemEvents.UserPreferenceChanged+=SystemThemeChanged;
         mutex = new Mutex(true,"Local\\HandyLime-"+Environment.UserName,out var first);
-        if (!first) { Dialogs.Show("HandyLime is already running. Open it from the system tray.","HandyLime"); Shutdown(); return; }
+        if (!first) { if(!e.Args.Contains("--tray"))Dialogs.Show("HandyLime is already running. Open it from the system tray.","HandyLime"); Shutdown(); return; }
         Engines = new(Settings);
         Shell = new MainWindow(this); MainWindow = Shell;
         DispatcherUnhandledException += (_,args) => { Dialogs.Show(args.Exception.Message,"HandyLime — something went wrong",MessageBoxButton.OK,MessageBoxImage.Error); args.Handled = true; };
@@ -35,9 +35,8 @@ public partial class App : System.Windows.Application
         menu.Items.Add("Quit",null,(_,_)=>Dispatcher.Invoke(Quit)); tray.ContextMenuStrip=menu;
         tray.DoubleClick += (_,_)=>Dispatcher.Invoke(ShowShell);
         trigger = new DragTrigger(this);
-        Shell.Show();
         var files = e.Args.Where(p=>File.Exists(p) || Directory.Exists(p)).ToArray(); if(files.Length>0) Shell.AddPaths(files);
-        if(e.Args.Contains("--tray")) Shell.Hide();
+        if(!e.Args.Contains("--tray")||files.Length>0)Shell.Show();
     }
     public void ShowShell() { Shell.Show(); Shell.WindowState=WindowState.Normal; Shell.Activate(); }
     public void Quit()

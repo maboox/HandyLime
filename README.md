@@ -41,7 +41,7 @@ Use Windows 11 x64 or a supported Windows 10 edition/build. The app is currently
 ## Features
 
 - **Images:** convert, resize, crop, rotate, adjust light and color, annotate, add backgrounds, cover areas, inspect/remove metadata and create collages.
-- **Video & audio:** convert, make GIFs, trim, split, crop, reorder/join clips, change speed, export frames and inspect/remove metadata. Requires FFmpeg and FFprobe.
+- **Video & audio:** adjust video light/color/detail with live frame previews and edited playback samples; convert, make GIFs, trim, split, crop, reorder/join clips, change speed, export frames and inspect/remove metadata. Requires FFmpeg and FFprobe.
 - **PDFs & documents:** merge, split, reorder and rotate PDF pages; export pages or text. Office conversions use LibreOffice; Markdown/EPUB routes use Pandoc.
 - **File tools:** create/extract ZIP and TAR archives, calculate checksums, copy paths and keep files on a floating shelf.
 - **Workspace:** batch queue, visual previews, saved destinations, Light/Dark/System appearance and a tray menu.
@@ -69,6 +69,8 @@ Processing happens locally. HandyLime does not upload conversion inputs or requi
 Conversions create new files beside the originals by default; repeated names receive a numeric suffix. The separate **Move to…** action changes the source location after confirmation.
 
 Closing the main window keeps the app in the tray by default. Double-click the tray icon to reopen it, or choose **Quit** to exit. Change this behavior in Settings.
+
+Want it ready when Windows starts? Enable **Settings → Start HandyLime with Windows**. It starts minimized in the tray after you sign in; the option is off by default. Keep the app in a permanent folder. After moving it, use **Use this copy for Windows startup** in Settings to update the location, or turn the option off to remove it.
 
 This is a preview release. Complex documents, unusual codecs and large files can have format-specific limitations; review outputs before deleting originals. [Detailed limitations](docs/USAGE.md#known-limitations).
 

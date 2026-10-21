@@ -41,7 +41,7 @@ public partial class MainWindow : Window
     public bool IsBusy => pending > 0;
     public MainWindow(App app)
     {
-        InitializeComponent(); this.app=app; FileList.ItemsSource=files; RefreshStatus();
+        InitializeComponent();VersionLabel.Text="HandyLime "+typeof(App).Assembly.GetName().Version?.ToString(3); this.app=app; FileList.ItemsSource=files; RefreshStatus();
         activityRefresh.Tick+=(_,_)=>{activityRefresh.Stop();if(currentPage=="activity")ActivityTab(this,new());};
         BrandMark.Content=Brand.Mark(38);AddFilesButton.Content=Icons.Label("plus","Add files");MoveUpButton.Content=Icons.Create("arrow-up",14);MoveDownButton.Content=Icons.Create("arrow-down",14);ConvertNav.Content=Icons.Label("arrow-left-right","Convert");ToolsNav.Content=Icons.Label("sliders-horizontal","File tools");ActivityNav.Content=Icons.Label("activity","Activity");SettingsNav.Content=Icons.Label("settings","Settings");
         Closing += OnClosing;
@@ -173,6 +173,7 @@ public partial class MainWindow : Window
         wheel.Click+=(_,_)=> {app.Settings.DragWheelEnabled=wheel.IsChecked==true; app.Settings.Save(); RefreshStatus();}; OtherContent.Children.Add(wheel);
         var tray=new CheckBox {Content="Keep running in the system tray when the window is closed",IsChecked=app.Settings.MinimizeToTray};
         tray.Click+=(_,_)=> {app.Settings.MinimizeToTray=tray.IsChecked==true; app.Settings.Save();}; OtherContent.Children.Add(tray);
+        ConfigureStartupSettings();
         var output=new Button {Content="Choose output folder…",HorizontalAlignment=HorizontalAlignment.Left,Margin=new Thickness(0,16,0,6)};
         output.Click+=(_,_)=> {var d=new OpenFolderDialog(); if(d.ShowDialog(this)==true) {app.Settings.OutputDirectory=d.FolderName; app.Settings.Save(); RefreshStatus();}}; OtherContent.Children.Add(output);
         var reset=new Button {Content="Use source folder",HorizontalAlignment=HorizontalAlignment.Left,Margin=new Thickness(0,0,0,24)};

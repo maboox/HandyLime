@@ -99,7 +99,7 @@ public sealed class WheelWindow : Window
         }geometry.Freeze();return geometry;
     }
     static string ShortTitle(Operation op)=>op.Id.StartsWith("convert:")?op.Title:op.Id switch{
-        "compress-image" or "compress-video"=>"COMPRESS","crop-image" or "crop-video"=>"CROP","adjust"=>"EDIT","annotate"=>"ANNOTATE",
+        "compress-image" or "compress-video"=>"COMPRESS","crop-image" or "crop-video"=>"CROP","adjust" or "adjust-video"=>"EDIT","annotate"=>"ANNOTATE",
         "redact-image" or "redact-video"=>"COVER","background"=>"ADD BG","strip-image" or "strip-media" or "strip-audio"=>"METADATA",
         "trim-video" or "trim-audio"=>"TRIM","split-video"=>"SPLIT","join-video"=>"JOIN","frame"=>"FRAME",
         _=>op.Title.ToUpperInvariant().Replace(" IMAGE","").Replace(" VIDEO","")};
