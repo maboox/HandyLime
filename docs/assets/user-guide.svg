@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="260" height="68" viewBox="0 0 260 68" role="img" aria-labelledby="title"><title id="title">User guide — English + Persian</title><rect x="1" y="1" width="258" height="66" rx="14" fill="#E4DCF9" stroke="#C9B7EB"/><g transform="translate(18 21) scale(1.0416666666666667)" fill="none" stroke="#332647" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+  <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+  <circle cx="11.5" cy="14.5" r="2.5" />
+  <path d="M13.3 16.3 15 18" />
+</g><text x="56" y="29" fill="#332647" font-family="Segoe UI,Arial,sans-serif" font-size="17" font-weight="700">User guide</text><text x="56" y="48" fill="#635278" font-family="Segoe UI,Arial,sans-serif" font-size="11" >English + Persian</text></svg>

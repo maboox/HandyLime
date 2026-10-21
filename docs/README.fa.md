@@ -1,6 +1,20 @@
+<p align="center"><a href="../README.md"><img src="assets/hero.svg" width="1280" alt="HandyLime — تبدیل و ویرایش فایل‌ها در ویندوز" /></a></p>
+
 # HandyLime — راهنمای فارسی
 
 ابزاری برای تبدیل و ویرایش فایل‌ها در ویندوز، با پردازش محلی، چرخ انتخاب کنار نشانگر و تم روشن/تیره.
+
+<p align="center">
+  <a href="https://github.com/maboox/HandyLime/releases/latest/download/HandyLime-windows-x64.zip"><img src="assets/download-portable.svg" width="260" height="68" alt="دانلود Portable؛ دات‌نت همراه برنامه است" /></a>
+  <a href="https://github.com/maboox/HandyLime/releases/latest/download/HandyLime-windows-x64-lite.zip"><img src="assets/download-lite.svg" width="260" height="68" alt="دانلود Lite؛ نیازمند .NET Desktop Runtime 10 x64" /></a>
+</p>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/workspace-dark.png" />
+  <img src="assets/workspace-light.png" width="1174" alt="نمای واقعی محیط HandyLime در ویندوز؛ تم روشن و تیره از تنظیمات قابل انتخاب است" />
+</picture>
+
+[English](../README.md) · [فرمت‌های پشتیبانی‌شده](FORMATS.md) · [گزارش مشکل یا پیشنهاد](https://github.com/maboox/HandyLime/issues/new/choose)
 
 ## دانلود
 
