@@ -17,12 +17,7 @@ public sealed partial class ToolWindow
             SliderField("fontSize","Text size",8,200,36,1,value=>canvas.FontSizeValue=value);SliderField("strokeWidth","Stroke width",1,30,4,1,value=>canvas.StrokeWidth=value);
             var row=new WrapPanel();controls.Children.Add(row);ActionButton(row,"Undo",()=>canvas.Undo());ActionButton(row,"Delete selected",()=>canvas.DeleteSelected());ActionButton(row,"Reset",()=>canvas.ResetMarks());return;
         }
-        if(id=="adjust"){
-            var compareBox=new CheckBox{Content="Show original (compare)"};compareBox.Click+=(_,_)=>{compare=compareBox.IsChecked==true;SchedulePreview();};controls.Children.Add(compareBox);
-            Section("Light");SliderField("exposure","Exposure (EV)",-3,3,0,0.1);SliderField("brightness","Brightness",0,200,100,1);SliderField("contrast","Contrast",-100,100,0,1);
-            SliderField("highlights","Highlights",-100,100,0,1);SliderField("shadows","Shadows",-100,100,0,1);SliderField("whites","Whites",-100,100,0,1);SliderField("blacks","Blacks",-100,100,0,1);SliderField("gamma","Gamma",0.2,3,1,0.05);
-            Section("Color");SliderField("temperature","Warmth",-100,100,0,1);SliderField("tint","Tint",-100,100,0,1);SliderField("saturation","Saturation",0,200,100,1);SliderField("vibrance","Vibrance",-100,100,0,1);SliderField("hue","Hue",-180,180,0,1);Section("Detail");SliderField("sharpen","Sharpen",0,5,0,0.1);return;
-        }
+        if(id=="adjust"){ConfigureAdjustments();return;}
         if(id is "resize" or "background"){
             NumericField("width","Width (px)",originalWidth,1,16384);NumericField("height","Height (px)",originalHeight,1,16384);
             var row=new WrapPanel();controls.Children.Add(row);foreach(var factor in new[]{0.25,0.5,1.0,2.0})ActionButton(row,$"{factor*100:0}%",()=>{Set("width",Math.Clamp(Math.Round(originalWidth*factor),1,16384));Set("height",Math.Clamp(Math.Round(originalHeight*factor),1,16384));SchedulePreview();});if(id=="background")ColorControl("color","Background","#FFFFFF");
@@ -46,6 +41,12 @@ public sealed partial class ToolWindow
         if(timeline.SelectRange){ActionButton(transport,"Set start",()=>{timeline.Start=Math.Min(timeline.Position,timeline.End-0.05);UpdateTimeFields();timeline.InvalidateVisual();});ActionButton(transport,"Set end",()=>{timeline.End=Math.Max(timeline.Position,timeline.Start+0.05);UpdateTimeFields();timeline.InvalidateVisual();});}
         if(timeline.Splitting){ActionButton(transport,"Split here",()=>timeline.AddCut());ActionButton(transport,"Remove marker",()=>timeline.RemoveCut());}
         if(operation.Id is "crop-video" or "redact-video")ConfigureRegion(operation.Id=="redact-video");
+        if(operation.Id=="adjust-video"){
+            play.Content=Icons.Label("play","Play original");ConfigureAdjustments();
+            var edited=new Button{Content=Icons.Label("play","Play edited"),Width=130,Height=36,FontSize=12,Padding=new Thickness(10,0,10,0),Margin=new Thickness(0,0,6,6)};
+            edited.Click+=async(_,_)=>{if(rendering)return;edited.IsEnabled=false;try{outputPreviewTask=PreviewResult();await outputPreviewTask;}finally{if(!lifetime.IsCancellationRequested)edited.IsEnabled=true;}};transport.Children.Add(edited);
+            controls.Children.Add(new TextBlock{Text="Sliders update the paused frame. Play original reviews the source; Play edited previews up to 5 seconds of your changes. Save applies them to the whole video.",TextWrapping=TextWrapping.Wrap,FontSize=12,Margin=new Thickness(0,14,0,0)});
+        }
         if(timeline.SelectRange){Section("Selected time range");NumericField("start","Start (seconds)",0,0,info!.Duration);NumericField("end","End (seconds)",info.Duration,0,info.Duration);}
         if(operation.Id=="frame")NumericField("start","Frame time (seconds)",0,0,info!.Duration);
         if(timeline.Splitting){
@@ -58,7 +59,7 @@ public sealed partial class ToolWindow
         if(operation.Id=="convert:gif"){Section("Animated GIF");SliderField("fps","Frames per second",1,30,15,1);SliderField("width","Width (px)",64,1920,Math.Min(640,Math.Max(64,info!.Width)),16);controls.Children.Add(new TextBlock{Text="Select a short interval for a smaller GIF. GIF has no audio.",FontSize=12,Margin=new Thickness(0,8,0,12)});}
         
         if(operation.Id is "crop-video" or "redact-video" or "speed" or "compress-video" or "convert:gif" or "bleep" or "normalize" or "channels"){
-            var preview=new Button{Content=Icons.Label("play","Preview result · 5 seconds"),Margin=new Thickness(0,18,0,0)};preview.Click+=async(_,_)=>{preview.IsEnabled=false;try{outputPreviewTask=PreviewResult();await outputPreviewTask;}finally{if(!lifetime.IsCancellationRequested)preview.IsEnabled=true;}};controls.Children.Add(preview);
+            var preview=new Button{Content=Icons.Label("play",operation.Id=="adjust-video"?"Preview edited clip · 5 seconds":"Preview result · 5 seconds"),Margin=new Thickness(0,18,0,0)};preview.Click+=async(_,_)=>{preview.IsEnabled=false;try{outputPreviewTask=PreviewResult();await outputPreviewTask;}finally{if(!lifetime.IsCancellationRequested)preview.IsEnabled=true;}};controls.Children.Add(preview);
         }
     }
     void ConfigureFiles(){previewArea.Children.Clear();var stack=new StackPanel{Margin=new Thickness(20)};stack.Children.Add(new TextBlock{Text=operation.Title,FontSize=24,FontWeight=FontWeights.SemiBold});stack.Children.Add(new TextBlock{Text=operation.Description,Margin=new Thickness(0,14,0,20)});foreach(var path in inputs)stack.Children.Add(new TextBlock{Text="▧  "+Path.GetFileName(path),Margin=new Thickness(0,8,0,8)});previewArea.Children.Add(new ScrollViewer{Content=stack});FileOrder();foreach(var field in operation.Fields)TextField(field.Key,field.Label,field.Default);}

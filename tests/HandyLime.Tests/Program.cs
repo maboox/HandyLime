@@ -32,6 +32,38 @@ await Test("Visual split markers: sorting and invalid boundaries",()=>{
     foreach(var invalid in new[]{"0","2","1,1","1,1.02","NaN",""})Throws(()=>Editing.SplitPoints(invalid,2));return Task.CompletedTask;
 });
 await Test("Missing engine is identified before starting work",()=>{Assert(engines.Missing(new("missing","Missing","Test","NotAnEngine")).SequenceEqual(new[]{"NotAnEngine"}));return Task.CompletedTask;});
+await Test("Video adjustment catalog shares every photo slider",()=>{
+    var photo=Catalog.Tools("photo.png").Single(o=>o.Id=="adjust");var video=Catalog.Tools("clip.mp4").Single(o=>o.Id=="adjust-video");
+    Assert(photo.Fields.SequenceEqual(video.Fields)&&video.Fields.Length==14&&video.Engine=="FFmpeg");
+    Assert(!Catalog.Tools("track.mp3").Any(o=>o.Id=="adjust-video"));return Task.CompletedTask;
+});
+await Test("Windows startup quotes paths and rejects unsafe commands",()=>{
+    var exe=Path.Combine(root,"app with spaces & فارسی.exe");
+    Assert(StartupRegistration.CommandFor(exe)=="\""+exe+"\" --tray");
+    foreach(var invalid in new[]{"relative.exe",exe+"\" --other",exe+"\n",Path.Combine(root,"app.dll")})Throws(()=>StartupRegistration.CommandFor(invalid));
+    return Task.CompletedTask;
+});
+await Test("Windows startup registration isolated roundtrip",()=>{
+    var fixtureKey="Software\\HandyLime.Tests-"+Guid.NewGuid().ToString("N");var exe=Path.Combine(root,"startup fixture.exe");File.WriteAllBytes(exe,[]);
+    try{
+        using var key=Microsoft.Win32.Registry.CurrentUser.CreateSubKey(fixtureKey,true);
+        key.SetValue("Unrelated entry","preserve me");Assert(key.GetValue(StartupRegistration.ValueName)==null);
+        StartupRegistration.Write(key,exe,true);Assert((string?)key.GetValue(StartupRegistration.ValueName)==StartupRegistration.CommandFor(exe));
+        Assert(key.GetValueKind(StartupRegistration.ValueName)==Microsoft.Win32.RegistryValueKind.String);
+        StartupRegistration.Write(key,exe,false);StartupRegistration.Write(key,exe,false);
+        Assert(key.GetValue(StartupRegistration.ValueName)==null&&(string?)key.GetValue("Unrelated entry")=="preserve me");
+    }finally{Microsoft.Win32.Registry.CurrentUser.DeleteSubKey(fixtureKey,false);}
+    return Task.CompletedTask;
+});
+await Test("Video frame adjustments are neutral, bounded and cancellable",()=>{
+    var data=new byte[1600*900*4];for(int i=0;i<data.Length;i+=4){data[i]=(byte)(i%251);data[i+1]=90;data[i+2]=160;data[i+3]=255;}
+    var small=new PreviewPixels(20,10,data[..800]);var neutral=VideoAdjustments.Preview(small,new(),CancellationToken.None);Assert(neutral.Bgra.SequenceEqual(small.Bgra));
+    var adjusted=VideoAdjustments.Preview(small,new(){["exposure"]="-1"},CancellationToken.None);Assert(adjusted.Bgra[2]<neutral.Bgra[2]);
+    var quick=VideoAdjustments.Preview(new(1600,900,data),new(),CancellationToken.None,true);Assert(quick.Width<=720&&quick.Height<=720);
+    using var cancelled=new CancellationTokenSource();cancelled.Cancel();Throws(()=>VideoAdjustments.Preview(small,new(),cancelled.Token));
+    var cube=Path.Combine(root,"cancelled.cube");Throws(()=>VideoAdjustments.WriteCube(cube,new(),cancelled.Token));Assert(!File.Exists(cube));
+    Throws(()=>VideoAdjustments.Preview(small,new(){["gamma"]="NaN"},CancellationToken.None));return Task.CompletedTask;
+});
 await Test("Subtitle roundtrip and Unicode",()=>{var srt="1\n00:00:01,250 --> 00:00:03,500\nسلام <b>world</b>\n\n2\n00:01:00,000 --> 00:01:01,000\nSecond cue\n";var vtt=SubtitleEngine.Convert(srt,"vtt");Assert(vtt.StartsWith("WEBVTT"));var cues=SubtitleEngine.Parse(SubtitleEngine.Convert(vtt,"srt"));Assert(cues.Count==2&&cues[0].Start.TotalMilliseconds==1250);Assert(SubtitleEngine.Convert(srt,"txt").Contains("سلام world"));return Task.CompletedTask;});
 await Test("Reject malformed subtitle timing",()=>{Throws(()=>SubtitleEngine.Parse("1\n00:00:05,000 --> 00:00:03,000\nInvalid"));return Task.CompletedTask;});
 await Test("PDF page ranges, descending and duplicates",()=>{Assert(PdfEngine.ParsePages("3,1-2,3-2",3).SequenceEqual(new[]{2,0,1,2,1}));Throws(()=>PdfEngine.ParsePages("0",3));Throws(()=>PdfEngine.ParsePages("1-4",3));return Task.CompletedTask;});
@@ -100,6 +132,32 @@ if(engines.Find("FFmpeg")!=null && engines.Find("FFprobe")!=null) {
         await ProcessRunner.Run(engines.Require("FFmpeg"),["-v","error","-f","lavfi","-i","testsrc2=s=320x240:r=15:d=2","-f","lavfi","-i","sine=frequency=440:duration=2","-c:v","libx264","-pix_fmt","yuv420p","-c:a","aac","-shortest",video],CancellationToken.None);
         await ProcessRunner.Run(engines.Require("FFmpeg"),["-v","error","-f","lavfi","-i","sine=frequency=440:duration=2",audio],CancellationToken.None);
         await ProcessRunner.Run(engines.Require("FFmpeg"),["-v","error","-i",video,"-an","-c:v","copy",silent],CancellationToken.None);
+    });
+    async Task<PreviewPixels> VideoPixels(string path){var frame=Path.Combine(root,Guid.NewGuid().ToString("N")+".png");await PreviewEngine.Frame(engines,path,0.6,frame,CancellationToken.None);using var image=ImageEngine.Read(frame);using var pixels=image.GetPixels();return new((int)image.Width,(int)image.Height,pixels.ToByteArray(PixelMapping.BGRA)!);}
+    double PixelDifference(PreviewPixels a,PreviewPixels b){Assert(a.Width==b.Width&&a.Height==b.Height);long error=0;for(var i=0;i<a.Bgra.Length;i++)if(i%4!=3)error+=Math.Abs(a.Bgra[i]-b.Bgra[i]);return error/(a.Width*a.Height*3d);}
+    await Test("Video adjustments preserve geometry duration audio and neutral color",async()=>{
+        var output=await Run(video,"adjust-video");var info=await new MediaEngine(engines).Probe(output,CancellationToken.None);
+        Assert(info.Width==320&&info.Height==240&&info.HasAudio&&Math.Abs(info.Duration-2)<0.15);
+        var difference=PixelDifference(await VideoPixels(video),await VideoPixels(output));Assert(difference<6,$"Neutral adjustment changed colors too much: {difference:0.00}");
+    });
+    await Test("Video edited color matches the photo frame preview",async()=>{
+        var options=new Dictionary<string,string>{["exposure"]="-0.7",["brightness"]="90",["contrast"]="12",["highlights"]="-20",["shadows"]="15",["whites"]="5",["blacks"]="-5",["gamma"]="1.1",["temperature"]="12",["tint"]="8",["saturation"]="115",["vibrance"]="20",["hue"]="15"};
+        var source=await VideoPixels(video);var expected=VideoAdjustments.Preview(source,options,CancellationToken.None);var output=await Run(video,"adjust-video",options);
+        var actual=await VideoPixels(output);var difference=PixelDifference(expected,actual);Console.WriteLine($"DIAGNOSTIC Edited video vs frame preview: {difference:0.00}/255 mean channel difference");
+        Assert(difference<8,$"Rendered colors differ from the preview: {difference:0.00}");Assert(PixelDifference(source,actual)>10,"Video edit must visibly change the saved pixels");
+    });
+    await Test("Video adjustments handle silent clips sharpening and unusual paths",async()=>{
+        var folder=Path.Combine(root,"ویدیو [x]; , ' and spaces");Directory.CreateDirectory(folder);var input=Path.Combine(folder,"silent & clip.mp4");File.Copy(silent,input);
+        var op=Catalog.Tools(input).Single(o=>o.Id=="adjust-video");var reports=new RecordingProgress<JobProgress>();
+        var output=(await executor.Execute(new([input],op,new(){["sharpen"]="2",["saturation"]="0"},folder),CancellationToken.None,reports)).Outputs.Single();
+        var info=await new MediaEngine(engines).Probe(output,CancellationToken.None);Assert(!info.HasAudio&&info.Width==320&&Math.Abs(info.Duration-2)<0.15);
+        var frame=await VideoPixels(output);Assert(Enumerable.Range(0,frame.Width*frame.Height).Average(i=>Math.Abs(frame.Bgra[i*4]-frame.Bgra[i*4+2]))<3,"Zero saturation should produce neutral gray");
+        Assert(reports.Values.Last().Fraction==1&&reports.Values.Any(p=>p.Fraction is >=0 and <1));Assert(!Directory.GetDirectories(folder,".handylime-*").Any());
+    });
+    await Test("Video adjustments reject invalid values and clean cancelled work",async()=>{
+        foreach(var invalid in new[]{new Dictionary<string,string>{["exposure"]="NaN"},new(){["gamma"]="0"},new(){["sharpen"]="8"}})await ThrowsAsync(()=>Run(video,"adjust-video",invalid));
+        using var cancelled=new CancellationTokenSource();cancelled.Cancel();var op=Catalog.Tools(video).Single(o=>o.Id=="adjust-video");
+        await ThrowsAsync(()=>executor.Execute(new([video],op,new(),root),cancelled.Token));Assert(!Directory.GetDirectories(root,".handylime-*").Any());
     });
     foreach(var ext in new[]{"mov","mkv","webm","avi","wmv","gif","mp3","wav"})await Test("Video to "+ext,async()=>{var path=await Run(video,"convert:"+ext);Assert(new FileInfo(path).Length>0);});
     await Test("GIF selected interval, dimensions and visible progress",async()=>{

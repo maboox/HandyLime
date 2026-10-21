@@ -12,6 +12,7 @@ internal static class PreviewBitmap
     public static BitmapSource FromBytes(byte[] bytes){using var stream=new MemoryStream(bytes);var image=new BitmapImage();image.BeginInit();image.CacheOption=BitmapCacheOption.OnLoad;image.StreamSource=stream;image.EndInit();image.Freeze();return image;}
     public static BitmapSource FromFile(string path)=>FromBytes(File.ReadAllBytes(path));
     public static BitmapSource FromPixels(PreviewPixels pixels){var image=BitmapSource.Create(pixels.Width,pixels.Height,96,96,PixelFormats.Bgra32,null,pixels.Bgra,pixels.Width*4);image.Freeze();return image;}
+    public static PreviewPixels ToPixels(BitmapSource image){var converted=new FormatConvertedBitmap(image,PixelFormats.Bgra32,null,0);var bytes=new byte[converted.PixelWidth*converted.PixelHeight*4];converted.CopyPixels(bytes,converted.PixelWidth*4,0);return new(converted.PixelWidth,converted.PixelHeight,bytes);}
 }
 
 public sealed class EditorCanvas : FrameworkElement

@@ -8,14 +8,15 @@ public sealed partial class ToolWindow
 {
     bool imagePreviewBusy;
     readonly Dictionary<(string Source,long Frame),BitmapSource> frameCache=[];
-    void SchedulePreview(){if(!ready||rendering||operation.Id.StartsWith("strip-"))return;previewVersion++;if(kind==FileKind.Image){if(imagePreviewBusy)return;}else refresh?.Cancel();if(!debounce.IsEnabled)debounce.Start();}
+    void SchedulePreview(){if(!ready||rendering||operation.Id.StartsWith("strip-"))return;if(operation.Id=="adjust-video"&&playing)StopPlayback();previewVersion++;if(CachedAdjustment){if(imagePreviewBusy)return;}else refresh?.Cancel();if(!debounce.IsEnabled)debounce.Start();}
     async Task RefreshPreview()
     {
-        if(!ready||lifetime.IsCancellationRequested)return;imagePreviewBusy=kind==FileKind.Image;refresh?.Cancel();var request=CancellationTokenSource.CreateLinkedTokenSource(lifetime.Token);refresh=request;var token=request.Token;var version=previewVersion;var options=Options;var source=inputs.ToArray();var mediaInput=PreviewInput;var position=timeline.Position;
+        if(!ready||rendering||lifetime.IsCancellationRequested)return;imagePreviewBusy=CachedAdjustment;refresh?.Cancel();var request=CancellationTokenSource.CreateLinkedTokenSource(lifetime.Token);refresh=request;var token=request.Token;var version=previewVersion;var options=Options;var source=inputs.ToArray();var mediaInput=PreviewInput;var position=timeline.Position;
         try{
             await previewSerial.WaitAsync(token);
             try{
                 token.ThrowIfCancellationRequested();
+                if(operation.Id=="adjust-video"){await RefreshVideoAdjustment(mediaInput,position,options,token);return;}
                 if(kind==FileKind.Image){
                     if(compare||canvas.RegionEnabled||canvas.Annotating){canvas.Picture=original;canvas.DocumentWidth=originalWidth;canvas.DocumentHeight=originalHeight;canvas.InvalidateVisual();return;}
                     var watch=System.Diagnostics.Stopwatch.StartNew();var interactive=System.Windows.Input.Mouse.LeftButton==System.Windows.Input.MouseButtonState.Pressed;
@@ -28,7 +29,7 @@ public sealed partial class ToolWindow
                     token.ThrowIfCancellationRequested();canvas.Picture=PreviewBitmap.FromFile(path);if(kind==FileKind.Audio){original=canvas.Picture;timeline.Frames.Clear();timeline.Frames.Add(original);timeline.InvalidateVisual();}else{if(frameCache.Count>=32)frameCache.Remove(frameCache.Keys.First());frameCache[key]=canvas.Picture;}canvas.ShowPicture=true;canvas.InvalidateVisual();File.Delete(path);
                 }
             }finally{previewSerial.Release();}
-        }catch(OperationCanceledException){}catch(Exception ex){if(!token.IsCancellationRequested)Error("Preview: "+ex.Message);}finally{request.Dispose();if(ReferenceEquals(refresh,request))refresh=null;if(kind==FileKind.Image){imagePreviewBusy=false;if(ready&&!lifetime.IsCancellationRequested&&previewVersion!=version&&!debounce.IsEnabled)debounce.Start();}}
+        }catch(OperationCanceledException){}catch(Exception ex){if(!token.IsCancellationRequested)Error("Preview: "+ex.Message);}finally{request.Dispose();if(ReferenceEquals(refresh,request))refresh=null;if(CachedAdjustment){imagePreviewBusy=false;if(ready&&!lifetime.IsCancellationRequested&&previewVersion!=version&&!debounce.IsEnabled)debounce.Start();}}
     }
     CancellationTokenSource? filmstripCancellation;
     async Task LoadFilmstrip()
@@ -45,7 +46,7 @@ public sealed partial class ToolWindow
         if(operation.Id=="speed")player.SpeedRatio=Values.Number(values,"speed",2,0.25,4);
         player.Visibility=Visibility.Visible;canvas.ShowPicture=kind==FileKind.Audio;canvas.InvalidateVisual();player.Play();playing=true;play.Content=Icons.Label("pause","Pause");playback.Start();
     }
-    void StopPlayback(){if(!playing)return;player.Pause();playing=false;playback.Stop();play.Content=Icons.Label("play","Play");canvas.ShowPicture=true;canvas.InvalidateVisual();SchedulePreview();}
+    void StopPlayback(){if(!playing)return;player.Pause();playing=false;playback.Stop();play.Content=Icons.Label("play",PlayCaption);canvas.ShowPicture=true;canvas.InvalidateVisual();SchedulePreview();}
     CancellationTokenSource? proxyCancellation;
     async Task BuildPlaybackProxy()
     {
@@ -58,18 +59,23 @@ public sealed partial class ToolWindow
     }
     async Task PreviewResult()
     {
-        StopPlayback();rendering=true;save.IsEnabled=false;refresh?.Cancel();
+        if(rendering||!ready)return;
+        StopPlayback();rendering=true;save.IsEnabled=false;controls.IsEnabled=false;play.IsEnabled=false;timeline.IsEnabled=false;refresh?.Cancel();debounce.Stop();var capturedOptions=Options;
         try{
             status.Text="Rendering a short output preview…";var start=timeline.SelectRange?timeline.Start:timeline.Position;var duration=Math.Min(5,(timeline.SelectRange?timeline.End:timeline.Duration)-start);if(duration<0.05)throw new ArgumentException("Move the playhead away from the end.");
             var sample=Path.Combine(temp,Guid.NewGuid().ToString("N")+(kind==FileKind.Audio?".wav":".mp4"));var args=new List<string>{"-hide_banner","-v","error","-nostdin","-n","-ss",Values.Invariant(start),"-protocol_whitelist","file,pipe","-i",PreviewInput,"-t",Values.Invariant(duration)};
-            if(kind==FileKind.Video)args.AddRange(["-map","0:v:0","-map","0:a:0?","-vf","pad=ceil(iw/2)*2:ceil(ih/2)*2","-c:v","libx264","-preset","ultrafast","-crf","18","-c:a","aac"]);
-            args.Add(sample);await ProcessRunner.Run(engines.Require("FFmpeg"),args,lifetime.Token);var options=Options;options["start"]="0";options["end"]=Values.Invariant(duration);
+            if(kind==FileKind.Video)args.AddRange(["-map","0:v:0","-map","0:a:0?","-vf",(operation.Id=="adjust-video"?"scale=w='min(960,iw)':h=-2,":"")+"pad=ceil(iw/2)*2:ceil(ih/2)*2","-c:v","libx264","-preset","ultrafast","-crf","18","-c:a","aac"]);
+            args.Add(sample);await ProcessRunner.Run(engines.Require("FFmpeg"),args,lifetime.Token);var options=capturedOptions;options["start"]="0";options["end"]=Values.Invariant(duration);
             var ext=operation.Id=="convert:gif"?"gif":kind==FileKind.Audio?"wav":"mp4";var output=Path.Combine(temp,Guid.NewGuid().ToString("N")+"."+ext);
             await new MediaEngine(engines).Process([sample],operation.Id,options,output,lifetime.Token,new Progress<JobProgress>(p=>{if(!lifetime.IsCancellationRequested)status.Text=p.Message;}));
             if(ext=="gif"){var movie=Path.ChangeExtension(output,".mp4");await new MediaEngine(engines).Process([output],"convert:mp4",new(),movie,lifetime.Token,null);output=movie;}
             lifetime.Token.ThrowIfCancellationRequested();
             var media=new MediaElement{Source=new Uri(output),LoadedBehavior=MediaState.Manual,UnloadedBehavior=MediaState.Manual,Stretch=Stretch.Uniform};media.MediaEnded+=(_,_)=>{media.Position=TimeSpan.Zero;media.Play();};
-            var dialog=new Window{Owner=this,Title="Rendered output preview · up to 5 seconds",Width=760,Height=540,Content=media,Background=Brushes.Black,WindowStartupLocation=WindowStartupLocation.CenterOwner};dialog.Loaded+=(_,_)=>media.Play();dialog.Closed+=(_,_)=>media.Close();dialog.ShowDialog();status.Text="Output preview ready. Save creates the full selected result.";
-        }catch(OperationCanceledException){}catch(Exception ex){Error("Output preview: "+ex.Message);}finally{rendering=false;if(ready)save.IsEnabled=true;}
+            var dialog=new Window{Owner=this,Title="Rendered output preview · up to 5 seconds",Width=760,Height=590,Background=Theme.Brush("Canvas"),WindowStartupLocation=WindowStartupLocation.CenterOwner};
+            var body=new DockPanel();var back=new Button{Content="Back to editor",IsCancel=true,HorizontalAlignment=HorizontalAlignment.Right,Margin=new Thickness(14)};back.Click+=(_,_)=>dialog.Close();DockPanel.SetDock(back,Dock.Bottom);body.Children.Add(back);
+            var stage=new Grid{Background=Brushes.Black};stage.Children.Add(media);body.Children.Add(stage);dialog.Content=body;
+            media.MediaFailed+=(_,e)=>{stage.Children.Clear();stage.Children.Add(new TextBlock{Text="Windows could not play this preview. Frame previews and saving are still available.\n\n"+e.ErrorException.Message,Foreground=Brushes.White,TextWrapping=TextWrapping.Wrap,Margin=new Thickness(24),VerticalAlignment=VerticalAlignment.Center});};
+            dialog.Loaded+=(_,_)=>media.Play();dialog.Closed+=(_,_)=>media.Close();dialog.ShowDialog();status.Text="Output preview ready. Save creates the full result.";
+        }catch(OperationCanceledException){}catch(Exception ex){Error("Output preview: "+ex.Message);}finally{rendering=false;controls.IsEnabled=true;play.IsEnabled=true;timeline.IsEnabled=true;if(ready)save.IsEnabled=true;}
     }
 }

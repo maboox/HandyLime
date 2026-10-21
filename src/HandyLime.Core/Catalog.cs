@@ -73,7 +73,7 @@ public static class Catalog
                     new("crop-image", "Crop image", "Keep a precise rectangle; coordinates use the oriented image.", "Built in", X, Y, Width, Height),
                     new("rotate", "Rotate image", "Rotate clockwise and save as PNG.", "Built in", F("degrees", "Degrees clockwise", "90", "−360 to 360")),
                     new("flip", "Flip horizontally", "Mirror the image left to right."),
-                    new("adjust", "Adjust photo", "Adjust brightness and saturation with optional sharpening.", "Built in", F("brightness", "Brightness (%)", "100", "0–200; 100 is unchanged"), F("saturation", "Saturation (%)", "100", "0–200"), F("sharpen", "Sharpen (0–5)", "0")),
+                    new("adjust", "Adjust photo", "Adjust light, color and detail with a live preview.", "Built in", ColorAdjustments.Fields),
                     new("annotate", "Annotate photo", "Draw arrows, lines, shapes, text or pen strokes. Drag annotations to move them.", "Built in", F("text", "Text", "Your label"), X, Y, F("fontSize", "Font size", "36", "8–400"), F("color", "Text color", "#FFFFFF")),
                     new("background", "Add background", "Center the image on a solid canvas; fits without stretching.", "Built in", Width, Height, Color),
                     new("redact-image", "Cover image area", "Permanently cover one rectangular area in a new flattened PNG.", "Built in", X, Y, Width, Height),
@@ -82,6 +82,7 @@ public static class Catalog
                 break;
             case FileKind.Video:
                 list.AddRange([
+                    new("adjust-video", "Adjust video", "Adjust light, color and detail across the video. Preview a frame or play a short edited sample; save a new MP4 with audio.", "FFmpeg", ColorAdjustments.Fields),
                     new("compress-video", "Compress video", "Encode an MP4 copy. Higher CRF means a smaller, less detailed image.", "FFmpeg", F("crf", "CRF (18–40)", "28")),
                     new("trim-video", "Trim video", "Re-encode a precise time interval as MP4.", "FFmpeg", Start, End),
                     new("crop-video", "Crop video", "Crop a rectangle, preserving audio when present.", "FFmpeg", X, Y, Width, Height),

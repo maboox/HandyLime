@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.0 — 2026-10-21
+
+- Added Adjust video to the workspace and drag wheel, with the same 14 light/color/detail controls as the photo editor, original comparison, individual/all resets, a cached frame preview, timeline scrubbing and an edited playback sample.
+- Added full-resolution H.264 MP4 export with audio when present. The color LUT samples the photo transform; spatial sharpening uses FFmpeg. Temporary LUTs are isolated and removed after success, failure or cancellation.
+- Added optional Start HandyLime with Windows in Settings. It registers only the current user's HandyLime entry, starts in the tray after sign-in and can update the registered location after moving the portable folder. Disabled by default.
+- Avoided flashing the main window on tray startup and suppressed duplicate-instance messages for automatic tray launches.
+- Added an explicit Back to editor button to rendered previews and visible playback-failure feedback. The sidebar version now follows the built assembly.
+- Added eight regression tests for edited-video color agreement, dimensions/duration/audio, silent clips, unusual paths, cancellation and isolated Windows startup registration.
+
 ## 0.3.1 — 2026-10-20
 
 - Separated app downloads from the native library source companion in Actions and public Releases.

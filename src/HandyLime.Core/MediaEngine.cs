@@ -30,8 +30,8 @@ public sealed class MediaEngine(Engines engines)
             }
         }
     }
-    async Task Run(IEnumerable<string> args, CancellationToken token, IProgress<JobProgress>? progress, double duration=0,double offset=0,double span=1,string label="Converting") =>
-        await ProcessRunner.Run(engines.Require("FFmpeg"),new[] { "-hide_banner","-nostdin","-n","-loglevel","error","-progress","pipe:1","-stats_period","0.2" }.Concat(args),token,new MediaProgress(progress,duration,offset,span,label));
+    async Task Run(IEnumerable<string> args, CancellationToken token, IProgress<JobProgress>? progress, double duration=0,double offset=0,double span=1,string label="Converting",string? workingDirectory=null) =>
+        await ProcessRunner.Run(engines.Require("FFmpeg"),new[] { "-hide_banner","-nostdin","-n","-loglevel","error","-progress","pipe:1","-stats_period","0.2" }.Concat(args),token,new MediaProgress(progress,duration,offset,span,label),workingDirectory);
     static string[] Input(string path) => ["-protocol_whitelist","file,pipe","-i",path];
     static string[] AudioCodec(string ext) => ext switch {
         "mp3" => ["-c:a","libmp3lame","-q:a","2"], "m4a" => ["-c:a","aac","-b:a","192k"],
@@ -50,6 +50,7 @@ public sealed class MediaEngine(Engines engines)
         if (id == "join-video") { await Join(inputs,output,token,progress); return; }
         var input = inputs[0]; progress?.Report(new("Reading media information…"));
         var info = await Probe(input,token); var ext = Path.GetExtension(output).TrimStart('.');
+        if (id == "adjust-video") { await AdjustVideo(input, options, output, info, token, progress); return; }
         var expectedDuration=info.Duration;
         double N(string key,double fallback,double min,double max) => Values.Number(options,key,fallback,min,max);
         string S(double value) => Values.Invariant(value);
@@ -140,6 +141,29 @@ public sealed class MediaEngine(Engines engines)
         if (id=="trim-video") {var (start,end)=Interval();expectedDuration=end-start;}
         if (id=="speed") expectedDuration/=N("speed",2,0.25,4);
         args.Add(output); await Run(args,token,progress,expectedDuration);
+    }
+    async Task AdjustVideo(string input,Dictionary<string,string> options,string output,Info info,CancellationToken token,IProgress<JobProgress>? progress)
+    {
+        ColorAdjustments.Validate(options);
+        if (info.Width <= 0 || info.Height <= 0) throw new ArgumentException("The input contains no video track.");
+        var work = Path.Combine(Path.GetDirectoryName(Path.GetFullPath(output))!, "grade-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(work);
+        try {
+            progress?.Report(new("Preparing light and color adjustments…", 0));
+            await Task.Run(() => VideoAdjustments.WriteCube(Path.Combine(work,"colors.cube"), options, token), token);
+            // Use a fixed relative LUT name to avoid FFmpeg filter-path escaping.
+            var filter = "format=rgb24,lut3d=file=colors.cube:interp=tetrahedral";
+            var sharpen = Values.Number(options,"sharpen",0,0,5);
+            if (sharpen > 0) filter += ",unsharp=5:5:" + Values.Invariant(sharpen / 2) + ":5:5:0";
+            filter += ",pad=ceil(iw/2)*2:ceil(ih/2)*2";
+            var args = new List<string>(Input(Path.GetFullPath(input)));
+            args.AddRange(["-map","0:v:0","-map","0:a:0?","-vf",filter]);
+            args.AddRange(VideoCodec("mp4","18"));
+            args.AddRange(["-movflags","+faststart",Path.GetFullPath(output)]);
+            await Run(args,token,progress,info.Duration,label:"Applying light and color",workingDirectory:work);
+        } finally {
+            try { Directory.Delete(work,true); } catch (IOException) {} catch (UnauthorizedAccessException) {}
+        }
     }
     async Task Join(string[] inputs,string output,CancellationToken token,IProgress<JobProgress>? progress)
     {

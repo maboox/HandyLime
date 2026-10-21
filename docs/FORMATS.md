@@ -1,6 +1,8 @@
 # Supported operations
 
-This file describes HandyLime 0.3.x, not the full capability set of its engines. Portable and Lite expose the same routes in `Catalog.cs`. Batch selections show the intersection of compatible operations. All outputs are new copies, except the separately confirmed Move file action.
+This file describes HandyLime 0.4.x, not the full capability set of its engines. Portable and Lite expose the same routes in `Catalog.cs`. Batch selections show the intersection of compatible operations. All outputs are new copies, except the separately confirmed Move file action.
+
+**Adjust video** uses FFmpeg/FFprobe and the same 14 light/color/detail controls as Adjust photo. It writes a full-duration H.264 MP4 at the original dimensions (padding odd edges for 4:2:0), with AAC audio when present. It uses 8-bit SDR color processing, not HDR grading. Frame previews are bounded for responsiveness; Save processes the original file. Only the first video/audio stream is used.
 
 ## Conversions
 
