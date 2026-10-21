@@ -30,3 +30,12 @@ secrets.json
 secrets.*.json
 .tools/
 audit-results/
+
+# Publish generated downloads in Releases instead of committing them.
+*.zip
+*.7z
+*.rar
+*.exe
+*.dll
+*.pdb
+*.bundle
