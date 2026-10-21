@@ -14,9 +14,11 @@ Images, video, audio, PDFs and documents. One everyday Windows workspace.
   <a href="docs/USAGE.md"><img src="docs/assets/user-guide.svg" width="260" height="68" alt="Read the user guide in English or Persian" /></a>
 </p>
 
-[![Windows build and tests](https://github.com/maboox/HandyLime/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/maboox/HandyLime/actions/workflows/build.yml?query=branch%3Amain)
-[![Latest release](https://img.shields.io/github/v/release/maboox/HandyLime?style=flat&label=release&color=80a931)](https://github.com/maboox/HandyLime/releases/latest)
-[![MIT license](https://img.shields.io/github/license/maboox/HandyLime?style=flat&color=8b78b4)](LICENSE)
+<p>
+  <a href="https://github.com/maboox/HandyLime/actions/workflows/build.yml?query=branch%3Amain"><img src="https://github.com/maboox/HandyLime/actions/workflows/build.yml/badge.svg?branch=main" alt="Windows build and tests" /></a>
+  <a href="https://github.com/maboox/HandyLime/releases/latest"><img src="https://img.shields.io/github/v/release/maboox/HandyLime?style=flat&amp;label=release&amp;color=80a931" alt="Latest release" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/maboox/HandyLime?style=flat&amp;color=8b78b4" alt="MIT license" /></a>
+</p>
 
 [Screenshots](#at-home-in-light-or-dark) · [Features](#a-practical-toolkit) · [Setup](#get-started) · [Formats](docs/FORMATS.md) · **[فارسی](#فارسی)**
 
