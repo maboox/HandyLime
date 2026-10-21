@@ -10,6 +10,10 @@ Convert and edit files without leaving your workflow.
 
 **Windows x64 · Local processing · Light & dark themes · Open source**
 
+[![Windows build and tests](https://github.com/maboox/HandyLime/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/maboox/HandyLime/actions/workflows/build.yml?query=branch%3Amain)
+[![Latest release](https://img.shields.io/github/v/release/maboox/HandyLime)](https://github.com/maboox/HandyLime/releases/latest)
+[![MIT license](https://img.shields.io/github/license/maboox/HandyLime)](LICENSE)
+
 [Download](https://github.com/maboox/HandyLime/releases/latest) · [User guide](docs/USAGE.md) · [Supported formats](docs/FORMATS.md) · [فارسی](docs/README.fa.md)
 
 </div>
@@ -81,3 +85,15 @@ This is a preview release. Complex documents, unusual codecs and large files can
 HandyLime is independent software inspired by the drag-wheel workflow of Tangerine for Mac. It is not affiliated with Tangerine.
 
 HandyLime's source and original lime mark are [MIT licensed](LICENSE). Interface icons are from [Lucide](https://lucide.dev/). Other libraries retain their licenses; see [third-party notices](THIRD-PARTY-NOTICES.md).
+
+## فارسی
+
+**HandyLime ابزاری متن‌باز برای تبدیل و ویرایش فایل‌ها در ویندوز است.** عکس، ویدیو، صدا، PDF و اسناد را با چرخ انتخاب کنار نشانگر یا پنجرهٔ اصلی پردازش کنید. ویرایشگرهای بصری، صف تبدیل و تم روشن و تیره دارد. پردازش فایل‌ها روی کامپیوتر خودتان انجام می‌شود و حساب کاربری لازم نیست.
+
+- **[دانلود نسخهٔ آماده](https://github.com/maboox/HandyLime/releases/latest):** فقط یکی از دو فایل برنامه را بگیرید. **Portable** دات‌نت را همراه دارد؛ **Lite** کم‌حجم‌تر است و به **[.NET Desktop Runtime 10 x64](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)** نیاز دارد. امکانات هر دو یکسان است.
+- ZIP را کامل استخراج و **HandyLime.exe** را اجرا کنید. فایل **corresponding-source** برای اجرای برنامه لازم نیست.
+- فایل را بکشید و **Shift** را برای تبدیل، **Alt** را برای ویرایش یا **Ctrl** را برای عملیات فایل بزنید. زدن دوبارهٔ همان کلید چرخ را می‌بندد.
+- تبدیل ویدیو و صدا به FFmpeg/FFprobe و برخی تبدیل‌های سند به LibreOffice یا Pandoc نیاز دارد؛ از تنظیمات برنامه آن‌ها را معرفی کنید.
+- این نسخه فعلاً پیش‌نمایش و بدون امضای تجاری است. خروجی‌های مهم را پیش از حذف فایل اصلی بررسی کنید.
+
+**[راهنمای کامل فارسی](docs/README.fa.md)** · [گزارش مشکل یا پیشنهاد](https://github.com/maboox/HandyLime/issues/new/choose) · [گزارش خصوصی مشکل امنیتی](https://github.com/maboox/HandyLime/security/advisories/new)

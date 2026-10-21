@@ -10,3 +10,23 @@ TestResults/
 tools/ffmpeg/
 tools/pandoc/
 tools/libreoffice/
+
+# Local credentials, private signing material and diagnostic data.
+.env
+.env.*
+!.env.example
+!.env.sample
+*.pem
+*.key
+*.pfx
+*.p12
+*.jks
+*.keystore
+*.log
+*.dmp
+credentials.json
+credentials.*.json
+secrets.json
+secrets.*.json
+.tools/
+audit-results/
