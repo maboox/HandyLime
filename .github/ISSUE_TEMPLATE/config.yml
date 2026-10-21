@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: User guide / راهنمای استفاده
+    url: https://github.com/maboox/HandyLime#readme
+    about: Downloads, setup, supported formats and the Persian guide.
+  - name: Private security report / گزارش امنیتی خصوصی
+    url: https://github.com/maboox/HandyLime/security/advisories/new
+    about: Report vulnerabilities and suspected secret leaks privately. اطلاعات محرمانه را در Issue عمومی نفرستید.
